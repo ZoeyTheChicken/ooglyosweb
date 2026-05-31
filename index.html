@@ -57,7 +57,7 @@
     </div>
     <div style="background:rgba(255,165,0,0.1);padding:15px;border-radius:10px;margin-bottom:20px;border:1px solid rgba(255,165,0,0.2)">
       <div style="font-size:13px;font-weight:700;color:#fa0">⚠ What failed</div>
-      <div id="bsodFailedDriver" style="font-size:14px;font-family:Consolas,monospace;color:#fc0">ntoskrnl.exe</div>
+      <div id="bsodFailedDriver" style="font-size:14px;font-family:Consolas,monospace;color:#fc0">oogly-wlan_v0.0.1-x64.sys</div>
     </div>
     <div style="background:rgba(0,0,0,0.3);padding:20px;border-radius:10px;margin-bottom:20px">
       <div style="font-size:13px;font-weight:700;opacity:0.8">📋 Technical Information</div>
@@ -183,7 +183,8 @@ const OoglyOS = {
     'HEAP_CORRUPTION':'0x000000C5','VIDEO_DRIVER_INIT_FAILURE':'0x000000B4',
     'BOOT_DEVICE_INACCESSIBLE':'0x0000007B','REGISTRY_ERROR':'0x00000051',
     'UNMOUNTABLE_BOOT_VOLUME':'0x000000ED','INACCESSIBLE_BOOT_DEVICE':'0x0000007B',
-    'OOGLYFS_CORRUPTION':'0x0000F5C0','SYSTEM_DESTROYED':'0xDEADBEEF'
+    'OOGLYFS_CORRUPTION':'0x0000F5C0','SYSTEM_DESTROYED':'0xDEADBEEF',
+    'APP_ATPT_ACC_RESTRICTED_MEM':'0x000000A7','SYSTEM_REPORTED_EXCEPTION':'0x0000006F','CRIT_FILESYS_LOG_FAIL':'0x00000098'
   },
 
   init() {
@@ -210,7 +211,7 @@ const OoglyOS = {
   
   renderAppContent(appId,winId){const c=document.getElementById('content-'+winId);if(!c)return;switch(this.apps[appId].type){case'iframe':c.innerHTML=`<iframe src="${this.apps[appId].url}" class="w-full h-full border-0"></iframe>`;break;case'browser':this.renderBrowser(c,winId);break;case'calculator':this.renderCalc(c,winId);break;case'terminal':this.renderTerm(c,winId);break;case'editor':this.renderEditor(c,winId);break;case'files':this.renderFiles(c,winId);break;case'settings':this.renderSettings(c,winId);break;case'about':this.renderAbout(c);break;case'taskmgr':this.renderTaskMgr(c);break;case'youtube':this.renderYouTube(c,winId);break;case'weather':this.renderWeather(c);break;case'clock':this.renderClock(c);break;case'paint':this.renderPaint(c,winId);break;case'notes':this.renderNotes(c,winId);break;case'music':this.renderMusic(c);break}},
   
-  renderBrowser(c,winId){c.innerHTML=`<div class="flex flex-col h-full"><div class="flex gap-1 p-2 bg-gray-100 dark:bg-gray-800"><button class="hover:bg-white/30 rounded px-2 py-1 text-sm" data-bnav="back">◀</button><button class="hover:bg-white/30 rounded px-2 py-1 text-sm" data-bnav="forward">▶</button><button class="hover:bg-white/30 rounded px-2 py-1 text-sm" data-bnav="reload">↻</button><div class="flex-1 flex items-center bg-white dark:bg-gray-700 rounded px-2"><input id="burl-${winId}" class="flex-1 bg-transparent outline-none text-sm" value="https://zoeyaviation.com"></div><button class="bg-blue-500 text-white rounded px-4 py-1 text-sm" data-bnav="go">Go</button></div><iframe id="bframe-${winId}" src="https://zoeyaviation.com" class="flex-1 border-0"></iframe></div>`;setTimeout(()=>{c.querySelectorAll('[data-bnav]').forEach(b=>b.onclick=(e)=>{e.stopPropagation();this.browserNav(winId,b.getAttribute('data-bnav'))});document.getElementById('burl-'+winId).onkeydown=(e)=>{if(e.key==='Enter')this.browserNav(winId,'go')}},50)},
+  renderBrowser(c,winId){c.innerHTML=`<div class="flex flex-col h-full"><div class="flex gap-1 p-2 bg-gray-100 dark:bg-gray-800"><button class="hover:bg-white/30 rounded px-2 py-1 text-sm" data-bnav="back">◀</button><button class="hover:bg-white/30 rounded px-2 py-1 text-sm" data-bnav="forward">▶</button><button class="hover:bg-white/30 rounded px-2 py-1 text-sm" data-bnav="reload">↻</button><div class="flex-1 flex items-center bg-white dark:bg-gray-700 rounded px-2"><input id="burl-${winId}" class="flex-1 bg-transparent outline-none text-sm" value="https://ecosia.org"></div><button class="bg-blue-500 text-white rounded px-4 py-1 text-sm" data-bnav="go">Go</button></div><iframe id="bframe-${winId}" src="https://ecosia.org" class="flex-1 border-0"></iframe></div>`;setTimeout(()=>{c.querySelectorAll('[data-bnav]').forEach(b=>b.onclick=(e)=>{e.stopPropagation();this.browserNav(winId,b.getAttribute('data-bnav'))});document.getElementById('burl-'+winId).onkeydown=(e)=>{if(e.key==='Enter')this.browserNav(winId,'go')}},50)},
   browserNav(winId,action){const iframe=document.getElementById('bframe-'+winId),urlInput=document.getElementById('burl-'+winId);if(!iframe||!urlInput)return;if(action==='go'){let u=urlInput.value.trim();if(u&&!u.startsWith('http'))u='https://'+u;iframe.src=u;urlInput.value=u}else if(action==='back')try{iframe.contentWindow.history.back()}catch(e){}else if(action==='forward')try{iframe.contentWindow.history.forward()}catch(e){}else if(action==='reload')iframe.src=iframe.src},
   
   renderCalc(c,winId){if(!this.calcState)this.calcState={};this.calcState[winId]='';c.innerHTML=`<div class="p-3 h-full flex flex-col bg-gray-50 dark:bg-gray-800"><div class="bg-white dark:bg-gray-700 rounded-xl p-4 mb-3 text-right text-3xl font-mono" id="calcdisp-${winId}">0</div><div class="grid grid-cols-4 gap-2 flex-1">${[['C','clear'],['(', '('],[')', ')'],['÷','/'],['7','7'],['8','8'],['9','9'],['×','*'],['4','4'],['5','5'],['6','6'],['−','-'],['1','1'],['2','2'],['3','3'],['+','+'],['0','0'],['.','.'],['=','=']].map(([l,v])=>`<button class="calc-btn rounded-xl text-lg font-semibold ${v==='='?'bg-blue-500 text-white col-span-2':v==='clear'?'bg-red-400 text-white':'bg-white dark:bg-gray-600'} p-3" data-calc="${v}">${l}</button>`).join('')}</div></div>`;setTimeout(()=>c.querySelectorAll('.calc-btn').forEach(b=>b.onclick=(e)=>{e.stopPropagation();this.calcInput(b.getAttribute('data-calc'),winId)}),50)},
@@ -388,8 +389,8 @@ executeTerminal(cmd, winId) {
   else if (cl === 'ofsck --conv-ntfs') {
     resp = '⚠️ Converting file system to NTFS...\n';
     resp += 'WARNING: NTFS is not supported by OoglyOS!\n';
-    resp += 'The system will crash on next boot.\n';
-    resp += 'Are you sure? Type "ofsck --conv-ntfs --force" to confirm.';
+    resp += 'The system will no longer be usable!\n';
+    resp += 'Are you sure? Type "ofsck --conv-ntfs --force" if you want to destroy your virtual OS permanently.';
   }
   else if (cl === 'ofsck --conv-ntfs --force') {
     this.ofs.convertToNTFS();
@@ -621,12 +622,12 @@ executeTerminal(cmd, winId) {
     const params=[this.generateBigHex(),'0xC0000034',this.generateBigHex(),'0x'+Math.random().toString(16).substr(2,8).toUpperCase()];
     document.getElementById('bsodStopName').textContent=errorName||'SYSTEM_SERVICE_EXCEPTION';
     document.getElementById('bsodStopCode').textContent=`${hc} (${params.join(', ')})`;
-    let cm='',fd='';const drivers=['ntoskrnl.exe','win32k.sys','ndis.sys','atapi.sys','hal.dll','ntfs.sys','tcpip.sys','dxgkrnl.sys'];
+    let cm='',fd='';const drivers=['oogly-wlan_v0.0.1-x64.sys','oogly.sys','appkit.sys','atapi.sys','hal.dll','ntfs.sys','tcpip.sys','dxgkrnl.sys'];
     switch(errorName){
       case'NTFS_FILE_SYSTEM':cm=`<div style="background:rgba(255,165,0,0.15);padding:15px;border-radius:10px;margin-bottom:20px;border:2px solid rgba(255,165,0,0.3)"><div style="font-size:14px;font-weight:700;color:#fa0">⚠️ File System Error</div><div style="font-size:13px;color:#fc0"><p><strong>NTFS is not supported by OoglyOS.</strong></p><p>Your system will not function using NTFS.</p><p><strong>Action:</strong> Reinstall using <span style="color:#60a5fa">OoglyFS</span>.</p><p style="font-size:11px">Run: ofsck --conv-ofs</p></div></div>`;fd='ntfs.sys (BLOCKED)';break;
       case'OOGLYFS_CORRUPTION':cm=`<div style="background:rgba(255,0,0,0.15);padding:15px;border-radius:10px;margin-bottom:20px"><div style="color:#f44;font-weight:700">💾 OoglyFS Corrupted</div><div style="color:#f88">Run <span style="color:#60a5fa">ofsck --repair</span></div></div>`;fd='ooglyfs.sys';break;
       case'SYSTEM_DESTROYED':cm=`<div style="background:rgba(255,0,0,0.2);padding:15px;border-radius:10px;margin-bottom:20px"><div style="color:#f00;font-weight:700">💀 SYSTEM DESTROYED</div><div style="color:#f44">All files missing. Reinstall required.</div></div>`;fd='All drivers (MISSING)';break;
-      case'OUT_OF_MEMORY':cm=`<div style="background:rgba(255,0,0,0.1);padding:15px;border-radius:10px;margin-bottom:20px"><div style="color:#f66;font-weight:700">🧠 Out of Memory</div><div style="color:#f88">RAM: ${this.totalRAM}MB | Used: ${this.usedRAM}MB</div></div>`;fd='Memory Manager';break;
+      case'OUT_OF_MEMORY':cm=`<div style="background:rgba(255,0,0,0.1);padding:15px;border-radius:10px;margin-bottom:20px"><div style="color:#f66;font-weight:700">🧠 Out of Memory</div><div style="color:#f88">RAM: ${this.totalRAM}MB | Used: ${this.usedRAM}MB</div></div>`;fd='memhandler64.dll';break;
       default:fd=drivers[Math.floor(Math.random()*drivers.length)];
     }
     document.getElementById('bsodFailedDriver').textContent=fd;
